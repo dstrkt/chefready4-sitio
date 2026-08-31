@@ -66,16 +66,42 @@
       </div>
       <div class="card" style="padding:36px;">
         <h3 style="margin-bottom:18px; font-size:22px;">Cuéntanos de tu evento</h3>
-        <form>
+        <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="e0b46abc-8c60-4d6a-8644-c519c3677473">
+          <input type="hidden" name="subject" value="Nuevo mensaje desde el sitio web — Chefready4">
+          <input type="hidden" name="from_name" value="Sitio web Chefready4">
           <div style="display:flex; flex-direction:column; gap:14px;">
-            <input type="text" placeholder="Nombre" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
-            <input type="text" placeholder="Empresa" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
-            <input type="text" placeholder="Tipo de evento" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
-            <input type="text" placeholder="Número aproximado de invitados" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
-            <input type="text" placeholder="Fecha tentativa" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <input type="text" name="nombre" placeholder="Nombre" required style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <input type="text" name="empresa" placeholder="Empresa" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <input type="text" name="contacto" placeholder="Correo o teléfono de contacto" required style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <input type="text" name="tipo_evento" placeholder="Tipo de evento" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <input type="text" name="invitados" placeholder="Número aproximado de invitados" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <input type="text" name="fecha" placeholder="Fecha tentativa" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px;">
+            <textarea name="mensaje" placeholder="Cuéntanos sobre tu evento" rows="4" style="padding:14px; border-radius:8px; border:1px solid var(--line); font-family:'Work Sans'; font-size:15px; resize:vertical;"></textarea>
+            <input type="checkbox" name="botcheck" style="display:none !important;" tabindex="-1" autocomplete="off">
             <button type="submit" class="btn btn-gold" style="justify-content:center; margin-top:6px;">Enviar</button>
+            <p id="form-status" style="margin:0; font-family:'Work Sans'; font-size:14px;" role="status"></p>
           </div>
         </form>
+        <script>
+        (function(){
+          var form=document.getElementById('contact-form');
+          var box=document.getElementById('form-status');
+          form.addEventListener('submit',function(e){
+            e.preventDefault();
+            var btn=form.querySelector('button[type=submit]');
+            var orig=btn.textContent; btn.textContent='Enviando...'; btn.disabled=true; box.textContent='';
+            fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}})
+              .then(function(r){return r.json();})
+              .then(function(j){
+                if(j.success){ form.reset(); box.style.color='#1f7a3d'; box.textContent='¡Gracias! Tu mensaje fue enviado. Te contactaremos muy pronto.'; }
+                else { box.style.color='#b00020'; box.textContent='No se pudo enviar. Por favor escríbenos por WhatsApp o correo.'; }
+              })
+              .catch(function(){ box.style.color='#b00020'; box.textContent='No se pudo enviar. Por favor escríbenos por WhatsApp o correo.'; })
+              .finally(function(){ btn.textContent=orig; btn.disabled=false; });
+          });
+        })();
+        </script>
       </div>
     </div>
   </div>
